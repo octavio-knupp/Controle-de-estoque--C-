@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ControleEstoque.scr.Services
+namespace ControleEstoque.src.Servico
 {
     internal class FileStorage
     {

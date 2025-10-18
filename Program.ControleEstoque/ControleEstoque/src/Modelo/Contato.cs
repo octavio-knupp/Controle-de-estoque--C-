@@ -1,8 +1,8 @@
 ﻿
 
-namespace ControleEstoque.scr.Models;
+namespace ControleEstoque.src.Modelo;
 
-public readonly record struct Contact(
+public readonly record struct Contato(
     int Id,
     string Name,
     string Email,
