@@ -16,9 +16,9 @@ class Program
             Console.Clear();
             Funcao.txt("");
             Funcao.txt("==== Controle de Estoque ====");
-            Funcao.txt("1 - Listar");
-            Funcao.txt("2 - Cadastrar Produto");
-            Funcao.txt("3 - Buscar por nome do produto");
+            Funcao.txt("1 - Cadastrar Produto");
+            Funcao.txt("2 - Listar Produtos");
+            Funcao.txt("3 - Buscar Produtos");
             Funcao.txt("4 - Atualizar Cadastro");
             Funcao.txt("5 - Excluir Produto");
             Funcao.txt("6 - Salvar Cadastro");
@@ -35,43 +35,73 @@ class Program
             Funcao.txt("Informe sua opção:");
             string opcao = Console.ReadLine();
             bool opV = int.TryParse(opcao, out int op);
-            Console.WriteLine(opV);
 
             if (!opV)
             {
-                Console.WriteLine("\nInforme um número válido");
+                Funcao.txt("\nInforme um número válido");
                 Console.ReadKey();
             }
 
-            switch (op)
+            switch(op)
             {
                 case 1:
-                    Funcao.txt("Hello word!");
+                    Console.Clear();
+                    Funcao.txt("");
+                    Funcao.txt("==== Cadastrar Produtos ====");
+
+                    Console.ReadKey();
                     break;
                 case 2:
-                    Funcao.txt("Hello word!");
+                    Console.Clear();
+                    Funcao.txt("");
+                    Funcao.txt("==== Listar Produtos ====");
+
+                    Console.ReadKey();
                     break;
                 case 3:
-                    Funcao.txt("Hello word!");
+                    Console.Clear();
+                    Funcao.txt("");
+                    Funcao.txt("==== Buscar Produtos ====");
+
+                    Console.ReadKey();
                     break;
                 case 4:
-                    Funcao.txt("Hello word!");
+                    Console.Clear();
+                    Funcao.txt("");
+                    Funcao.txt("==== Atualizar Cadastro ====");
+
+                    Console.ReadKey();
                     break;
                 case 5:
-                    Funcao.txt("Hello word!");
+                    Console.Clear();
+                    Funcao.txt("");
+                    Funcao.txt("==== Excluir Produto ====");
+
+                    Console.ReadKey();
                     break;
                 case 6:
-                    Funcao.txt("Hello word!");
+                    Console.Clear();
+                    Funcao.txt("");
+                    Funcao.txt("==== Salvar Cadastro ====");
+
+                    Console.ReadKey();
                     break;
                 case 7:
-                    Console.WriteLine("Hello word!");
+                    Console.Clear();
+                    Funcao.txt("");
+                    Funcao.txt("==== Backup Geral ====");
+
+                    Console.ReadKey();
                     break;
                 case 8:
-                    Funcao.txt("Hello word!");
+                    //Console.Clear();
+                    //Funcao.txt("");
+                    //Funcao.txt("Saindo do sistema...");
                     break;
 
                 default:
-                    Funcao.txt("Hello word!");
+                    Funcao.txt("Digite um valor dentro do intervalo de (1 - 8)");
+
                     break;
             }
 
