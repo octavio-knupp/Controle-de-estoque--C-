@@ -1,5 +1,7 @@
-﻿using ControleEstoque.src.Servico;
+﻿using System;
+using ControleEstoque.src.Servico;
 using ControleEstoque.src.Modelo;
+
 
 
 class Program
@@ -7,26 +9,30 @@ class Program
     static void Main()
     {
         int menu;
+        
 
         while (true)
         {
             Console.Clear();
-            Console.WriteLine("\n==== Controle de Estoque ====");
-            Console.WriteLine("1 - Listar");
-            Console.WriteLine("2 - Cadastrar Produto");
-            Console.WriteLine("3 - Buscar por nome do produto");
-            Console.WriteLine("4 - Atualizar Cadastro");
-            Console.WriteLine("5 - Excluir Produto");
-            Console.WriteLine("6 - Salvar Cadastro");
-            Console.WriteLine("7 - Backup Geral");
-            Console.WriteLine("8 - Sair\n");
-            Console.WriteLine("Integrantes:");
-            Console.WriteLine("Octavio Henrique Knupp Lucio");
-            Console.WriteLine("Eduardo da Cunha");
-            Console.WriteLine("Nícolas Joly Mussi");
-            Console.WriteLine("Alexandre...\n");
+            Funcao.txt("");
+            Funcao.txt("==== Controle de Estoque ====");
+            Funcao.txt("1 - Listar");
+            Funcao.txt("2 - Cadastrar Produto");
+            Funcao.txt("3 - Buscar por nome do produto");
+            Funcao.txt("4 - Atualizar Cadastro");
+            Funcao.txt("5 - Excluir Produto");
+            Funcao.txt("6 - Salvar Cadastro");
+            Funcao.txt("7 - Backup Geral");
+            Funcao.txt("8 - Sair\n");
+            Funcao.txt("Integrantes:\n");
+            Funcao.txt("Octavio Henrique Knupp Lucio");
+            Funcao.txt("Alexandre Aielo Lima");
+            Funcao.txt("Nícolas Joly Mussi");
+            Funcao.txt("Eduardo da Cunha\n");
+            
+            
 
-            Console.WriteLine("Informe sua opção:");
+            Funcao.txt("Informe sua opção:");
             string opcao = Console.ReadLine();
             bool opV = int.TryParse(opcao, out int op);
             Console.WriteLine(opV);
@@ -40,32 +46,32 @@ class Program
             switch (op)
             {
                 case 1:
-                    Console.WriteLine("Hello word!");
+                    Funcao.txt("Hello word!");
                     break;
                 case 2:
-                    Console.WriteLine("Hello word!");
+                    Funcao.txt("Hello word!");
                     break;
                 case 3:
-                    Console.WriteLine("Hello word!");
+                    Funcao.txt("Hello word!");
                     break;
                 case 4:
-                    Console.WriteLine("Hello word!");
+                    Funcao.txt("Hello word!");
                     break;
                 case 5:
-                    Console.WriteLine("Hello word!");
+                    Funcao.txt("Hello word!");
                     break;
                 case 6:
-                    Console.WriteLine("Hello word!");
+                    Funcao.txt("Hello word!");
                     break;
                 case 7:
                     Console.WriteLine("Hello word!");
                     break;
                 case 8:
-                    Console.WriteLine("Hello word!");
+                    Funcao.txt("Hello word!");
                     break;
 
                 default:
-                    Console.WriteLine("Hello word!");
+                    Funcao.txt("Hello word!");
                     break;
             }
 
