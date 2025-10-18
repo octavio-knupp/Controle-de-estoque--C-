@@ -11,7 +11,7 @@ class Program
         int menu;
         
 
-        while (true)
+        do
         {
             Console.Clear();
             Funcao.txt("");
@@ -34,7 +34,7 @@ class Program
 
             Funcao.txt("Informe sua opção:");
             string opcao = Console.ReadLine();
-            bool opV = int.TryParse(opcao, out int op);
+            bool opV = int.TryParse(opcao, out  menu);
 
             if (!opV)
             {
@@ -42,7 +42,7 @@ class Program
                 Console.ReadKey();
             }
 
-            switch(op)
+            switch(menu)
             {
                 case 1:
                     Console.Clear();
@@ -94,9 +94,9 @@ class Program
                     Console.ReadKey();
                     break;
                 case 8:
-                    //Console.Clear();
-                    //Funcao.txt("");
-                    //Funcao.txt("Saindo do sistema...");
+                    Console.Clear();
+                    Funcao.txt("");
+                    Funcao.txt("Saindo do sistema...");
                     break;
 
                 default:
@@ -104,9 +104,8 @@ class Program
 
                     break;
             }
-
             Console.ReadKey();
-        }
+        }while (menu != 8);
 
     }
 }

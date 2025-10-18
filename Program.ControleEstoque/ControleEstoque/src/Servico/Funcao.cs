@@ -18,6 +18,8 @@ namespace ControleEstoque.src.Servico
         Console.SetCursorPosition(posicaoInicial, Console.CursorTop);
         Console.WriteLine(texto);
         }
+
+        
     }
     
 }
