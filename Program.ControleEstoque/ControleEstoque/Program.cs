@@ -1,111 +1,142 @@
-﻿using System;
+﻿using ControleEstoque.src.Modelo;
 using ControleEstoque.src.Servico;
-using ControleEstoque.src.Modelo;
 
 
+Console.OutputEncoding = System.Text.Encoding.UTF8;
 
-class Program
+var storage = new FileStorage("data");
+var contatos = storage.LoadAll();
+
+int NextId() => contatos.Any() ? contatos.Max(c => c.Id) + 1 : 1;
+
+while (true)
 {
-    static void Main()
+    Console.Clear();
+    Funcao.txt("");
+    Funcao.txt("==== Controle de Estoque ====");
+    Funcao.txt("1 - Cadastrar Produto");
+    Funcao.txt("2 - Listar Produtos");
+    Funcao.txt("3 - Buscar Produtos");
+    Funcao.txt("4 - Atualizar Cadastro");
+    Funcao.txt("5 - Excluir Produto");
+    Funcao.txt("6 - Salvar Cadastro");
+    Funcao.txt("7 - Backup Geral");
+    Funcao.txt("8 - Sair");
+    Funcao.txt("");
+    Funcao.txt("Integrantes:");
+    Funcao.txt("");
+    Funcao.txt("Octavio Henrique Knupp Lucio");
+    Funcao.txt("Alexandre Aielo Lima");
+    Funcao.txt("Nícolas Joly Mussi");
+    Funcao.txt("Eduardo da Cunha");
+    var op = Console.ReadLine();
+
+    try
     {
-        int menu;
-        
-
-        do
+        switch (op)
         {
-            Console.Clear();
-            Funcao.txt("");
-            Funcao.txt("==== Controle de Estoque ====");
-            Funcao.txt("1 - Cadastrar Produto");
-            Funcao.txt("2 - Listar Produtos");
-            Funcao.txt("3 - Buscar Produtos");
-            Funcao.txt("4 - Atualizar Cadastro");
-            Funcao.txt("5 - Excluir Produto");
-            Funcao.txt("6 - Salvar Cadastro");
-            Funcao.txt("7 - Backup Geral");
-            Funcao.txt("8 - Sair\n");
-            Funcao.txt("Integrantes:\n");
-            Funcao.txt("Octavio Henrique Knupp Lucio");
-            Funcao.txt("Alexandre Aielo Lima");
-            Funcao.txt("Nícolas Joly Mussi");
-            Funcao.txt("Eduardo da Cunha\n");
-            
-            
-
-            Funcao.txt("Informe sua opção:");
-            string opcao = Console.ReadLine();
-            bool opV = int.TryParse(opcao, out  menu);
-
-            if (!opV)
-            {
-                Funcao.txt("\nInforme um número válido");
+            case "1":
+                Funcao.txt("Produto: "); var prod = Console.ReadLine() ?? "";
+                Funcao.txt("Categoria: "); var cat = Console.ReadLine() ?? "";
+                if (string.IsNullOrWhiteSpace(prod))
+                {
+                    Funcao.txt("Nome é obrigatório.");
+                    break;
+                }
+                var novo = new Contato(NextId(), prod.Trim(), cat.Trim());
+                contatos.Add(novo);
+                Funcao.txt($"Produto criado: {novo.Id}");
                 Console.ReadKey();
-            }
+                break;
 
-            switch(menu)
-            {
-                case 1:
-                    Console.Clear();
-                    Funcao.txt("");
-                    Funcao.txt("==== Cadastrar Produtos ====");
-
-                    Console.ReadKey();
+            case "2":
+                if (!contatos.Any())
+                {
+                    Funcao.txt("Sem produtos."); Console.ReadKey();
                     break;
-                case 2:
-                    Console.Clear();
-                    Funcao.txt("");
-                    Funcao.txt("==== Listar Produtos ====");
+                }
+                Funcao.txt("ID | PRODUTO | CATEGORIA");
+                foreach (var c in contatos.OrderBy(c => c.Produto))
+                    Funcao.txt($"{c.Id} | {c.Produto} | {c.Categoria} ");
+                Console.ReadKey();
+                break;
 
-                    Console.ReadKey();
+            case "3":
+                Funcao.txt("Parte do nome: "); var part = Console.ReadLine() ?? "";
+                var achados = contatos.Where(c => c.Produto.Contains(part, StringComparison.OrdinalIgnoreCase)).ToList();
+                if (!achados.Any())
+                {
+                    Funcao.txt("Nenhum encontrado.");
                     break;
-                case 3:
-                    Console.Clear();
-                    Funcao.txt("");
-                    Funcao.txt("==== Buscar Produtos ====");
+                }
+                foreach (var c in achados)
+                    Funcao.txt($"{c.Id} | {c.Produto} | {c.Categoria}");
+                Console.ReadKey();
+                break;
 
-                    Console.ReadKey();
+            case "4":
+                Funcao.txt("ID: ");
+                if (!int.TryParse(Console.ReadLine(), out var idUp))
+                {
+                    Funcao.txt("ID inválido.");
                     break;
-                case 4:
-                    Console.Clear();
-                    Funcao.txt("");
-                    Funcao.txt("==== Atualizar Cadastro ====");
-
-                    Console.ReadKey();
+                }
+                var idx = contatos.FindIndex(c => c.Id == idUp);
+                if (idx < 0)
+                {
+                    Funcao.txt("Não encontrado.");
                     break;
-                case 5:
-                    Console.Clear();
-                    Funcao.txt("");
-                    Funcao.txt("==== Excluir Produto ====");
+                }
+                Funcao.txt("Novo produto (Precione enter para atualizar o produto): "); var np = Console.ReadLine();
+                Funcao.txt("Novo categoria (Precione enter para atualizar a categoria): "); var nc = Console.ReadLine();
+                var atual = contatos[idx];
+                var edit = new Contato(
+                    atual.Id,
+                    string.IsNullOrWhiteSpace(np) ? atual.Produto : np.Trim(),
+                    string.IsNullOrWhiteSpace(nc) ? atual.Categoria : nc.Trim()
+                    );
+                contatos[idx] = edit;
+                Funcao.txt("Atualizado.");
+                Console.ReadKey();
+                break;
 
-                    Console.ReadKey();
+            case "5":
+                Funcao.txt("ID: ");
+                if (!int.TryParse(Console.ReadLine(), out var idDel))
+                {
+                    Funcao.txt("ID inválido.");
                     break;
-                case 6:
-                    Console.Clear();
-                    Funcao.txt("");
-                    Funcao.txt("==== Salvar Cadastro ====");
+                }
+                var removido = contatos.RemoveAll(c => c.Id == idDel);
+                Funcao.txt(removido > 0 ? "Excluído." : "Não encontrado.");
+                Console.ReadKey();
+                break;
 
-                    Console.ReadKey();
-                    break;
-                case 7:
-                    Console.Clear();
-                    Funcao.txt("");
-                    Funcao.txt("==== Backup Geral ====");
+            case "6":
+                storage.SaveAll(contatos);
+                Funcao.txt("Salvo em CSV.");
+                Console.ReadKey();
+                break;
 
-                    Console.ReadKey();
-                    break;
-                case 8:
-                    Console.Clear();
-                    Funcao.txt("");
-                    Funcao.txt("Saindo do sistema...");
-                    break;
+            case "7":
+                var b = storage.Backup();
+                Funcao.txt($"Backup criado: {b}");
+                Console.ReadKey();
+                break;
 
-                default:
-                    Funcao.txt("Digite um valor dentro do intervalo de (1 - 8)");
+            case "8":
+                Funcao.txt("Saindo do Programa");
+                Console.ReadKey();
+                return;
 
-                    break;
-            }
-            Console.ReadKey();
-        }while (menu != 8);
-
+            default:
+                Funcao.txt("Opção inválida.");
+                Console.ReadKey();
+                break;
+        }
+    }
+    catch (Exception ex)
+    {
+        Funcao.txt($"Erro: {ex.Message}");
     }
 }

@@ -1,11 +1,4 @@
 ﻿
-
 namespace ControleEstoque.src.Modelo;
 
-public readonly record struct Contato(
-    int Id,
-    string Name,
-    string Email,
-    string Telefone
-    );
-
+public readonly record struct Contato(int Id, string Produto, string Categoria);
