@@ -1,75 +1,22 @@
-using ControleEstoque.src.Servico;
-using ControleEstoque.src.Modelo;
+# AgendaConsoleBasico (C# Console — Nível Básico)
 
-class Program
-{
-    static void Main()
-    {
-        int menu;
+Projeto didático de agenda de contatos com **CRUD** em **arquivo CSV**.
 
-        while (true)
-        {
-            Console.Clear();
-            Console.WriteLine("\n==== Controle de Estoque ====");
-            Console.WriteLine("1 - Listar");
-            Console.WriteLine("2 - Cadastrar Produto");
-            Console.WriteLine("3 - Buscar por nome do produto");
-            Console.WriteLine("4 - Atualizar Cadastro");
-            Console.WriteLine("5 - Excluir Produto");
-            Console.WriteLine("6 - Salvar Cadastro");
-            Console.WriteLine("7 - Backup Geral");
-            Console.WriteLine("8 - Sair\n");
-            Console.WriteLine("Integrantes:");
-            Console.WriteLine("Octavio Henrique Knupp Lucio");
-            Console.WriteLine("Eduardo da Cunha");
-            Console.WriteLine("Nícolas Joly Mussi");
-            Console.WriteLine("Alexandre...\n");
+## Como executar
+```bash
+dotnet run
+```
 
-            Console.WriteLine("Informe sua opção:");
-            string opcao = Console.ReadLine();
-            bool opV = int.TryParse(opcao, out int op);
-            Console.WriteLine(opV);
+## Plano de Aulas (sugestão)
+- **Aula 1**: Introdução ao C#, Console, tipos, `struct` Contact.
+- **Aula 2**: Leitura e escrita de **arquivos** (`File`, `StreamWriter`, `StreamReader`).
+- **Aula 3**: **CRUD** (criar, listar, buscar).
+- **Aula 4**: **Atualizar** e **Excluir**, validações e mensagens.
+- **Aula 5**: Organização do código (Services), tratamento de erros e **backup** simples.
+- **Aula 6**: Desafios: ordenação, busca por prefixo, exportar TXT.
 
-            if (opV == false)
-            {
-                Console.WriteLine("\nInforme um número válido");
-                Console.ReadKey();
-            }
-
-            switch (op)
-            {
-                case 1:
-                    Console.WriteLine("Hello word!");
-                    break;
-                case 2:
-                    Console.WriteLine("Hello word!");
-                    break;
-                case 3:
-                    Console.WriteLine("Hello word!");
-                    break;
-                case 4:
-                    Console.WriteLine("Hello word!");
-                    break;
-                case 5:
-                    Console.WriteLine("Hello word!");
-                    break;
-                case 6:
-                    Console.WriteLine("Hello word!");
-                    break;
-                case 7:
-                    Console.WriteLine("Hello word!");
-                    break;
-                case 8:
-                    Console.WriteLine("Hello word!");
-                    break;
-
-                default:
-                    Console.WriteLine("Hello word!");
-                    break;
-            }
-
-            
-        }
-
-    }
-}
+## Estrutura
+- `src/Models/Contact.cs` — `struct` do contato.
+- `src/Services/FileStorage.cs` — leitura/gravação CSV.
+- `src/Program.cs` — menu e interface.
+- `data/contatos.csv` — arquivo de dados.

@@ -1,23 +1,4 @@
-# Pasta do Visual Studio
 .vs/
-.vscode/
-
-# Pastas de build
 bin/
 obj/
-
-# Arquivos de configuração locais
-*.user
-*.suo
-*.cache
-*.db
-*.log
-
-# Pastas temporárias
-Debug/
-Release/
-TestResults/
-
-# Outros arquivos do sistema
-Thumbs.db
-Desktop.ini
+data/backup/*
