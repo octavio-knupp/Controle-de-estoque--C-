@@ -1,6 +1,5 @@
 # Adicionar
 - Quantidade de produto
-- Valor de venda do produto
   # Verificações
   - Nome do produto obrigatório
   - Quantidade do produto tem que ser maior ou igual a zero
