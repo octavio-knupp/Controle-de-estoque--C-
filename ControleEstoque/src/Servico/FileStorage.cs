@@ -13,7 +13,7 @@ public class FileStorage
         _path = Path.Combine(baseDir, "estoque.csv");
         if (!File.Exists(_path))
         {
-            File.WriteAllText(_path, "Id;Produto;Categoria;\n", Encoding.UTF8);
+            File.WriteAllText(_path, "Id;Produto;Categoria;Quantidade\n", Encoding.UTF8);
         }
     }
 
@@ -46,7 +46,7 @@ public class FileStorage
                 // Cria arquivo temporário
                 using (var w = new StreamWriter(tmp, false, Encoding.UTF8))
                 {
-                    w.WriteLine("id;produto;categoria;quantidade");
+                    w.WriteLine("Id;Produto;Categoria;Quantidade");
                     foreach (var c in estoque)
                     {
                         w.WriteLine($"{c.Id};{c.Produto};{c.Categoria};{c.Quantidade}");
@@ -83,8 +83,8 @@ public class FileStorage
     {
         var backupDir = Path.Combine(Path.GetDirectoryName(_path)!, "backup");
         Directory.CreateDirectory(backupDir);
-        var stamp = DateTime.Now.ToString("yyyyMMdd_HHmmss");
-        var dest = Path.Combine(backupDir, $"contatos_{stamp}.csv");
+        var stamp = DateTime.Now.ToString("yyyy_MMdd_HHmmss");
+        var dest = Path.Combine(backupDir, $"estoque_{stamp}.csv");
         File.Copy(_path, dest, true);
         return dest;
     }

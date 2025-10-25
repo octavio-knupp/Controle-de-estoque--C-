@@ -1,0 +1,120 @@
+###############################################################################
+# GITIGNORE PROFISSIONAL - PROJETOS C# / .NET
+# Autor: Octavio Henrique Knupp Lucio
+# Descrição: Arquivo otimizado para manter o repositório limpo e profissional
+###############################################################################
+
+# =========================
+# Visual Studio
+# =========================
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# =========================
+# Visual Studio Code
+# =========================
+.vscode/
+.history/
+*.code-workspace
+
+# =========================
+# Build e Compilação
+# =========================
+bin/
+obj/
+[Bb]uild/
+[Ll]og/
+[Ll]ogs/
+x64/
+x86/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+*.dll
+*.exe
+*.pdb
+*.mdb
+*.cache
+*.db
+
+# =========================
+# Backup / Temporários
+# =========================
+*.tmp
+*.bak
+*.old
+*.orig
+*.temp
+*.swp
+*.lock
+*.DS_Store
+Thumbs.db
+ehthumbs.db
+desktop.ini
+
+# =========================
+# IDE / Extensões
+# =========================
+.idea/
+JetBrains.ReSharper.*
+_ReSharper*/
+*.DotSettings.user
+
+# =========================
+# Copilot / AI / Plugins
+# =========================
+CopilotIndices/
+*.tlog
+*.lastcodeanalysissucceeded
+*.lastbuildstate
+
+# =========================
+# Testes e Publicações
+# =========================
+[Tt]est[Rr]esults/
+*.TestResults/
+*.coverage
+*.coveragexml
+*.trx
+*.log
+publish/
+PublishProfiles/
+
+# =========================
+# Pacotes / Dependências
+# =========================
+packages/
+node_modules/
+*.nupkg
+*.snupkg
+*.nuspec
+
+# =========================
+# Configurações Locais
+# =========================
+appsettings.Development.json
+appsettings.Local.json
+.env
+*.secret.json
+
+# =========================
+# Outros arquivos desnecessários
+# =========================
+*.vsidx
+*.tlog
+*.obj
+*.ipch
+*.aps
+*.ncb
+*.res
+*.sbr
+*.idb
+*.opendb
+*.db-wal
+*.db-shm
+
+###############################################################################
+# Fim do .gitignore
+###############################################################################

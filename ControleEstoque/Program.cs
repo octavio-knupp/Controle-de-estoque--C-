@@ -76,15 +76,20 @@ while (true)
                 Console.ReadKey();
                 break;
 
-            case "2":
+            case "2": 
                 if (!estoque.Any())
                 {
                     Funcao.txt("Sem produtos."); Console.ReadKey();
                     break;
                 }
-                Funcao.txt("ID | PRODUTO | CATEGORIA | Quantidade".PadRight(10));
+                Funcao.txt("ID".PadRight(5)+"PRODUTO".PadRight(20)+"CATEGORIA".PadRight(20)+"Quantidade");
                 foreach (var c in estoque.OrderBy(c => c.Produto))
-                    Funcao.txt($"{c.Id} | {c.Produto} | {c.Categoria} | {c.Quantidade} ");
+                    Funcao.txt( 
+                        c.Id.ToString().PadRight(5)+
+                        c.Produto.PadRight(20)+
+                        c.Categoria.PadRight(20)+
+                        c.Quantidade.ToString().PadRight(10)
+                     );
                 Console.ReadKey();
                 break;
 
@@ -116,7 +121,7 @@ while (true)
                 }
                 Funcao.txt("Novo produto (Precione enter para atualizar o produto): "); var np = Console.ReadLine();
                 Funcao.txt("Novo categoria (Precione enter para atualizar a categoria): "); var nc = Console.ReadLine();
-                Funcao.txt("Novo categoria (Precione enter para atualizar a quantidade): "); var nq = Console.ReadLine();
+                Funcao.txt("Novo quantidade (Precione enter para atualizar a quantidade): "); var nq = Console.ReadLine();
                 var atual = estoque[idx];
                 int novaQuantidade;
                 if (string.IsNullOrWhiteSpace(nq))
