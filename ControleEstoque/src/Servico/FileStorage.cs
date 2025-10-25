@@ -83,7 +83,7 @@ public class FileStorage
     {
         var backupDir = Path.Combine(Path.GetDirectoryName(_path)!, "backup");
         Directory.CreateDirectory(backupDir);
-        var stamp = DateTime.Now.ToString("yyyy_MMdd_HHmmss");
+        var stamp = DateTime.Now.ToString("yyyy_MM_dd_HH-mm-ss");
         var dest = Path.Combine(backupDir, $"estoque_{stamp}.csv");
         File.Copy(_path, dest, true);
         return dest;
