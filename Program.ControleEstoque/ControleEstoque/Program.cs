@@ -5,9 +5,9 @@ using ControleEstoque.src.Servico;
 Console.OutputEncoding = System.Text.Encoding.UTF8;
 
 var storage = new FileStorage("data");
-var contatos = storage.LoadAll();
+var estoque = storage.LoadAll();
 
-int NextId() => contatos.Any() ? contatos.Max(c => c.Id) + 1 : 1;
+int NextId() => estoque.Any() ? estoque.Max(c => c.Id) + 1 : 1;
 
 while (true)
 {
@@ -38,39 +38,66 @@ while (true)
             case "1":
                 Funcao.txt("Produto: "); var prod = Console.ReadLine() ?? "";
                 Funcao.txt("Categoria: "); var cat = Console.ReadLine() ?? "";
+                Funcao.txt("Quantidade: "); string qnd = Console.ReadLine() ?? "";
                 if (string.IsNullOrWhiteSpace(prod))
                 {
                     Funcao.txt("Nome é obrigatório.");
+                    Console.ReadKey();
                     break;
                 }
-                var novo = new Contato(NextId(), prod.Trim(), cat.Trim());
-                contatos.Add(novo);
+                if (!int.TryParse(qnd, out int quantidade))
+                {
+                    Console.WriteLine("Quantidade inválida.");
+                    Console.ReadKey();
+                }
+                if(quantidade == 0)
+                {
+                    Funcao.txt("Quantidade deve ser maior que zero.");
+                    Console.ReadKey();
+                    break;
+                }
+                else if (quantidade < 0)
+                {
+                    Funcao.txt("Valor negativo!!");
+                    Console.ReadKey();
+                    break;
+                }
+                else if(quantidade <= 10)
+                {
+                    Funcao.txt("Estoque baixo! Repor estoque em breve.");
+                    Console.ReadKey();
+                    
+                }
+                
+
+                var novo = new Estoque(NextId(), prod.Trim(), cat.Trim(), quantidade);
+                estoque.Add(novo);
                 Funcao.txt($"Produto criado: {novo.Id}");
                 Console.ReadKey();
                 break;
 
             case "2":
-                if (!contatos.Any())
+                if (!estoque.Any())
                 {
                     Funcao.txt("Sem produtos."); Console.ReadKey();
                     break;
                 }
-                Funcao.txt("ID | PRODUTO | CATEGORIA");
-                foreach (var c in contatos.OrderBy(c => c.Produto))
-                    Funcao.txt($"{c.Id} | {c.Produto} | {c.Categoria} ");
+                Funcao.txt("ID | PRODUTO | CATEGORIA | Quantidade".PadRight(10));
+                foreach (var c in estoque.OrderBy(c => c.Produto))
+                    Funcao.txt($"{c.Id} | {c.Produto} | {c.Categoria} | {c.Quantidade} ");
                 Console.ReadKey();
                 break;
 
             case "3":
                 Funcao.txt("Parte do nome: "); var part = Console.ReadLine() ?? "";
-                var achados = contatos.Where(c => c.Produto.Contains(part, StringComparison.OrdinalIgnoreCase)).ToList();
+                var achados = estoque.Where(c => c.Produto.Contains(part, StringComparison.OrdinalIgnoreCase)).ToList();
                 if (!achados.Any())
                 {
                     Funcao.txt("Nenhum encontrado.");
                     break;
                 }
                 foreach (var c in achados)
-                    Funcao.txt($"{c.Id} | {c.Produto} | {c.Categoria}");
+                    Funcao.txt($"{c.Id} | {c.Produto} | {c.Categoria} | {c.Quantidade}");
                 Console.ReadKey();
                 break;
 
@@ -81,7 +108,7 @@ while (true)
                     Funcao.txt("ID inválido.");
                     break;
                 }
-                var idx = contatos.FindIndex(c => c.Id == idUp);
+                var idx = estoque.FindIndex(c => c.Id == idUp);
                 if (idx < 0)
                 {
                     Funcao.txt("Não encontrado.");
@@ -89,13 +116,29 @@ while (true)
                 }
                 Funcao.txt("Novo produto (Precione enter para atualizar o produto): "); var np = Console.ReadLine();
                 Funcao.txt("Novo categoria (Precione enter para atualizar a categoria): "); var nc = Console.ReadLine();
-                var atual = contatos[idx];
-                var edit = new Contato(
+                Funcao.txt("Novo categoria (Precione enter para atualizar a quantidade): "); var nq = Console.ReadLine();
+                var atual = estoque[idx];
+                int novaQuantidade;
+                if (string.IsNullOrWhiteSpace(nq))
+                {
+                    novaQuantidade = atual.Quantidade;
+                }
+                else if (!int.TryParse(nq, out novaQuantidade))
+                {
+
+                    Funcao.txt("Quantidade inválida.");
+                    Console.ReadKey();
+                    break;
+                }
+                var edit = new Estoque(
                     atual.Id,
                     string.IsNullOrWhiteSpace(np) ? atual.Produto : np.Trim(),
-                    string.IsNullOrWhiteSpace(nc) ? atual.Categoria : nc.Trim()
+                    string.IsNullOrWhiteSpace(nc) ? atual.Categoria : nc.Trim(),
+                    novaQuantidade
                     );
-                contatos[idx] = edit;
+
+                estoque[idx] = edit;
+
                 Funcao.txt("Atualizado.");
                 Console.ReadKey();
                 break;
@@ -107,13 +150,13 @@ while (true)
                     Funcao.txt("ID inválido.");
                     break;
                 }
-                var removido = contatos.RemoveAll(c => c.Id == idDel);
+                var removido = estoque.RemoveAll(c => c.Id == idDel);
                 Funcao.txt(removido > 0 ? "Excluído." : "Não encontrado.");
                 Console.ReadKey();
                 break;
 
             case "6":
-                storage.SaveAll(contatos);
+                storage.SaveAll(estoque);
                 Funcao.txt("Salvo em CSV.");
                 Console.ReadKey();
                 break;

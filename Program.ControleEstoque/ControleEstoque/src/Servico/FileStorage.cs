@@ -10,30 +10,31 @@ public class FileStorage
     public FileStorage(string baseDir = "data")
     {
         Directory.CreateDirectory(baseDir);
-        _path = Path.Combine(baseDir, "contatos.csv");
+        _path = Path.Combine(baseDir, "estoque.csv");
         if (!File.Exists(_path))
         {
             File.WriteAllText(_path, "Id;Produto;Categoria;\n", Encoding.UTF8);
         }
     }
 
-    public List<Contato> LoadAll()
+    public List<Estoque> LoadAll()
     {
-        var list = new List<Contato>();
+        var list = new List<Estoque>();
         foreach (var line in File.ReadAllLines(_path, Encoding.UTF8).Skip(1))
         {
             if (string.IsNullOrWhiteSpace(line)) continue;
             var p = line.Split(';');
-            list.Add(new Contato(
+            list.Add(new Estoque(
                 Id: int.Parse(p[0]),
                 Produto: p[1],
-                Categoria: p[2]
+                Categoria: p[2],
+                 Quantidade: int.Parse(p[3])
             ));
         }
         return list;
     }
 
-    public void SaveAll(IEnumerable<Contato> contato)
+    public void SaveAll(IEnumerable<Estoque> estoque)
     {
         var tmp = _path + ".tmp";
         var maxTentativas = 3;
@@ -45,10 +46,10 @@ public class FileStorage
                 // Cria arquivo temporário
                 using (var w = new StreamWriter(tmp, false, Encoding.UTF8))
                 {
-                    w.WriteLine("id;produto;categoria");
-                    foreach (var c in contato)
+                    w.WriteLine("id;produto;categoria;quantidade");
+                    foreach (var c in estoque)
                     {
-                        w.WriteLine($"{c.Id};{c.Produto};{c.Categoria}");
+                        w.WriteLine($"{c.Id};{c.Produto};{c.Categoria};{c.Quantidade}");
                     }
                 }
 
