@@ -1,6 +1,5 @@
-﻿using System.Text;
-using ControleEstoque.src.Modelo;
-using System.Threading;
+﻿using ControleEstoque.src.Modelo;
+using System.Text;
 
 namespace ControleEstoque.src.Servico;
 
