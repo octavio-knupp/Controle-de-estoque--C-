@@ -3,10 +3,10 @@ using System.Text;
 
 namespace ControleEstoque.src.Servico;
 
-public class FileStorage
+public class CsvArmazenamento
 {
     private readonly string _path;
-    public FileStorage(string baseDir = "data")
+    public CsvArmazenamento(string baseDir = "data")
     {
         Directory.CreateDirectory(baseDir);
         _path = Path.Combine(baseDir, "estoque.csv");

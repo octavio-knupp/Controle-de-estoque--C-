@@ -4,8 +4,8 @@ using ControleEstoque.src.Servico;
 
 Console.OutputEncoding = System.Text.Encoding.UTF8;
 
-var storage = new FileStorage("data");
-var estoque = storage.LoadAll();
+var armazenamento = new CsvArmazenamento("data");
+var estoque = armazenamento.LoadAll();
 
 int NextId() => estoque.Any() ? estoque.Max(c => c.Id) + 1 : 1;
 
@@ -22,7 +22,7 @@ while (true)
     Funcao.txt("6 - Salvar Cadastro");
     Funcao.txt("7 - Movimentar produto");
     Funcao.txt("8 - Backup Geral");
-    Funcao.txt("9 - Sair");
+    Funcao.txt("9 - Sair e Salvar");
     Funcao.txt("");
     Funcao.txt("Integrantes:");
     Funcao.txt("");
@@ -270,7 +270,7 @@ while (true)
                 break;
 
             case "6":
-                storage.SaveAll(estoque);
+                armazenamento.SaveAll(estoque);
                 Funcao.txt("Salvo em CSV.");
                 Console.ReadKey();
                 break;
@@ -284,12 +284,14 @@ while (true)
                 */
                 break;
             case "8":
-                var b = storage.Backup();
+                var b = armazenamento.Backup();
                 Funcao.txt($"Backup criado: {b}");
                 Console.ReadKey();
                 break;
 
             case "9":
+                armazenamento.SaveAll(estoque);
+                Funcao.txt("Salvo em CSV.");
                 Funcao.txt("Saindo do Programa");
                 Console.ReadKey();
                 return;

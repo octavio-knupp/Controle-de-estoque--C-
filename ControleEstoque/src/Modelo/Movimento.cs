@@ -2,7 +2,7 @@
 
 public readonly record struct Movimentos(
     int Id,
-    int Produto,      // ← Apenas o ID, não o nome!
+    int ProdutoId,      // ← Apenas o ID, não o nome!
     string Tipo,        // ← "ENTRADA" ou "SAIDA"
     int Quantidade,
     DateTime Data,      // ← Data da movimentação
