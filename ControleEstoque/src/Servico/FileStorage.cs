@@ -16,24 +16,24 @@ public class FileStorage
         }
     }
 
-    public List<Estoque> LoadAll()
+    public List<Produtos> LoadAll()
     {
-        var list = new List<Estoque>();
+        var list = new List<Produtos>();
         foreach (var line in File.ReadAllLines(_path, Encoding.UTF8).Skip(1))
         {
             if (string.IsNullOrWhiteSpace(line)) continue;
             var p = line.Split(';');
-            list.Add(new Estoque(
+            list.Add(new Produtos(
                 Id: int.Parse(p[0]),
                 Produto: p[1],
                 Categoria: p[2],
-                 Quantidade: int.Parse(p[3])
+                Quantidade: int.Parse(p[3])
             ));
         }
         return list;
     }
 
-    public void SaveAll(IEnumerable<Estoque> estoque)
+    public void SaveAll(IEnumerable<Produtos> produtos)
     {
         var tmp = _path + ".tmp";
         var maxTentativas = 3;
@@ -46,7 +46,7 @@ public class FileStorage
                 using (var w = new StreamWriter(tmp, false, Encoding.UTF8))
                 {
                     w.WriteLine("Id;Produto;Categoria;Quantidade");
-                    foreach (var c in estoque)
+                    foreach (var c in produtos)
                     {
                         w.WriteLine($"{c.Id};{c.Produto};{c.Categoria};{c.Quantidade}");
                     }

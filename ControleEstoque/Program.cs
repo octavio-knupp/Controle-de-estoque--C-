@@ -20,8 +20,9 @@ while (true)
     Funcao.txt("4 - Atualizar Cadastro");
     Funcao.txt("5 - Excluir Produto");
     Funcao.txt("6 - Salvar Cadastro");
-    Funcao.txt("7 - Backup Geral");
-    Funcao.txt("8 - Sair");
+    Funcao.txt("7 - Movimentar produto");
+    Funcao.txt("8 - Backup Geral");
+    Funcao.txt("9 - Sair");
     Funcao.txt("");
     Funcao.txt("Integrantes:");
     Funcao.txt("");
@@ -35,14 +36,14 @@ while (true)
     {
         switch (op)
         {
-            case "1":
-                Funcao.txt("Produto: "); 
+            case "1": // Cadastro de produto
+                Funcao.txt("Produto: ");
                 var prod = Console.ReadLine() ?? "";
 
-                Funcao.txt("Categoria: "); 
+                Funcao.txt("Categoria: ");
                 var cat = Console.ReadLine() ?? "";
 
-                Funcao.txt("Quantidade: "); 
+                Funcao.txt("Quantidade: ");
                 string qnd = Console.ReadLine() ?? "";
 
                 if (string.IsNullOrWhiteSpace(prod))
@@ -56,7 +57,7 @@ while (true)
                     Console.WriteLine("Quantidade inválida.");
                     Console.ReadKey();
                 }
-                if(quantidade == 0)
+                if (quantidade == 0)
                 {
                     Funcao.txt("Quantidade deve ser maior que zero.");
                     Console.ReadKey();
@@ -68,26 +69,27 @@ while (true)
                     Console.ReadKey();
                     break;
                 }
-                else if(quantidade <= 10)
+                else if (quantidade <= 10)
                 {
                     Funcao.txt("Estoque baixo! Repor estoque em breve.");
                     Console.ReadKey();
-                    
+
                 }
-                
-                var novo = new Estoque(NextId(), prod.Trim(), cat.Trim(), quantidade);
+
+                var novo = new Produtos(NextId(), prod.Trim(), cat.Trim(), quantidade);
                 estoque.Add(novo);
-                Funcao.txt($"Produto criado: {novo.Id}");
+                Funcao.txt($"Produto criado com ID: {novo.Id}");
                 Console.ReadKey();
                 break;
 
-            case "2": 
+            case "2": // Listagem de produtos
                 if (!estoque.Any())
                 {
-                    Funcao.txt("Sem produtos cadastrados."); 
+                    Funcao.txt("Sem produtos cadastrados.");
                     Console.ReadKey();
                     break;
                 }
+                Funcao.txt("");
                 Funcao.txt("ID".PadRight(5) + "PRODUTO".PadRight(20) + "CATEGORIA".PadRight(20) + "QUANTIDADE");
                 Funcao.txt(new string('-', 70));
 
@@ -100,10 +102,11 @@ while (true)
                         c.Quantidade.ToString().PadRight(10)
                      );
                 }
+                Funcao.txt("");
                 Console.ReadKey();
                 break;
 
-            case "3":
+            case "3": // Busca de produtos por parte do nome
                 Funcao.txt("Parte do nome: ");
                 var part = Console.ReadLine() ?? "";
                 var achados = estoque.Where(c => c.Produto.Contains(part, StringComparison.OrdinalIgnoreCase)).ToList();
@@ -111,18 +114,32 @@ while (true)
                 if (!achados.Any())
                 {
                     Funcao.txt("Nenhum produto encontrado.");
+                    Console.ReadKey();
                     break;
                 }
 
                 Funcao.txt("");
-                foreach (var c in achados)
-                    Funcao.txt($"{c.Id} | {c.Produto} | {c.Categoria} | {c.Quantidade}");
+                Funcao.txt($"Encontrados: {achados.Count} Produto(s)");
+                Funcao.txt("");
+                Funcao.txt("ID".PadRight(5) + "PRODUTO".PadRight(20) + "CATEGORIA".PadRight(20) + "QUANTIDADE");
+                Funcao.txt(new string('-', 70));
 
+                // Listagem dos encontrados
+                foreach (var c in achados.OrderBy(c => c.Produto))
+                {
+                    Funcao.txt(
+                        c.Id.ToString().PadRight(5) +
+                        c.Produto.PadRight(20) +
+                        c.Categoria.PadRight(20) +
+                        c.Quantidade.ToString().PadRight(10)
+                     );
+                }
+                Funcao.txt("");
                 Console.ReadKey();
                 break;
 
-            case "4":
-                Funcao.txt("ID do produto: ");
+            case "4": // Atualizar cadastro
+                Funcao.txt($"ID do produto: ");
                 if (!int.TryParse(Console.ReadLine(), out var idUp))
                 {
                     Funcao.txt("ID inválido.");
@@ -131,19 +148,24 @@ while (true)
                 }
 
                 var idx = estoque.FindIndex(c => c.Id == idUp);
-
                 if (idx < 0)
                 {
                     Funcao.txt("Produto não encontrado.");
+                    Console.ReadKey();
                     break;
                 }
+
+                var novoProduto = estoque[idx];
+                Funcao.txt($"Atualizando ID: {novoProduto.Id}");
+                Funcao.txt("");
+
                 // Produto
                 string np;
                 do
                 {
+                    Funcao.txt($"Produto atual: {novoProduto.Produto}");
                     Funcao.txt("Novo produto (Digite o nome do produto): ");
                     np = Console.ReadLine();
-
                     if (string.IsNullOrWhiteSpace(np))
                     {
                         Funcao.txt(" O nome do produto é obrigatório!\n");
@@ -154,6 +176,7 @@ while (true)
                 string nc;
                 do
                 {
+                    Funcao.txt($"Categoria atual: {novoProduto.Categoria}");
                     Funcao.txt("Nova categoria (Digite a categoria): ");
                     nc = Console.ReadLine();
 
@@ -167,6 +190,7 @@ while (true)
                 string nq;
                 do
                 {
+                    Funcao.txt($"Quantidade atual: {novoProduto.Quantidade}");
                     Funcao.txt("Nova quantidade (Digite apenas números): ");
                     string entradaNq = Console.ReadLine();
 
@@ -201,7 +225,7 @@ while (true)
                     Console.ReadKey();
                     break;
                 }
-                var edit = new Estoque(
+                var edit = new Produtos(
                     atual.Id,
                     string.IsNullOrWhiteSpace(np) ? atual.Produto : np.Trim(),
                     string.IsNullOrWhiteSpace(nc) ? atual.Categoria : nc.Trim(),
@@ -250,14 +274,22 @@ while (true)
                 Funcao.txt("Salvo em CSV.");
                 Console.ReadKey();
                 break;
-
             case "7":
+                /*
+                 lógica de movimentação de produto;
+                 pede o id;
+                 mostra o produto do id;
+                 pedir a quantidade que quer movimentar;
+                 enter ele faz a movimentação para  arquivo movimento.csv;
+                */
+                break;
+            case "8":
                 var b = storage.Backup();
                 Funcao.txt($"Backup criado: {b}");
                 Console.ReadKey();
                 break;
 
-            case "8":
+            case "9":
                 Funcao.txt("Saindo do Programa");
                 Console.ReadKey();
                 return;
