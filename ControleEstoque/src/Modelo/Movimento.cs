@@ -1,4 +1,6 @@
-﻿namespace ControleEstoque.src.Modelo;
+﻿//Pasta src: Pasta Modelo: Movimento.cs
+
+namespace ControleEstoque.src.Modelo;
 
 public readonly record struct Movimentos(
     int Id,

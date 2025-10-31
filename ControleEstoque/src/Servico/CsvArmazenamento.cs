@@ -1,4 +1,6 @@
-﻿using ControleEstoque.src.Modelo;
+﻿//Pasta src: Pasta Servico: CsvArmazenamento.cs
+
+using ControleEstoque.src.Modelo;
 using System.Text;
 
 namespace ControleEstoque.src.Servico;
@@ -9,10 +11,10 @@ public class CsvArmazenamento
     public CsvArmazenamento(string baseDir = "data")
     {
         Directory.CreateDirectory(baseDir);
-        _path = Path.Combine(baseDir, "estoque.csv");
+        _path = Path.Combine(baseDir, "produtos.csv");
         if (!File.Exists(_path))
         {
-            File.WriteAllText(_path, "Id;Produto;Categoria;Quantidade\n", Encoding.UTF8);
+            File.WriteAllText(_path, "Id;Produto;Categoria;Min;Saldo\n", Encoding.UTF8);
         }
     }
 
@@ -27,8 +29,9 @@ public class CsvArmazenamento
                 Id: int.Parse(p[0]),
                 Produto: p[1],
                 Categoria: p[2],
-                Quantidade: int.Parse(p[3])
-            ));
+                EstoqueMinimo: int.Parse(p[3]),
+                Saldo: int.Parse(p[4]))
+                );
         }
         return list;
     }
@@ -37,7 +40,6 @@ public class CsvArmazenamento
     {
         var tmp = _path + ".tmp";
         var maxTentativas = 3;
-
         for (int tentativa = 1; tentativa <= maxTentativas; tentativa++)
         {
             try
@@ -45,10 +47,10 @@ public class CsvArmazenamento
                 // Cria arquivo temporário
                 using (var w = new StreamWriter(tmp, false, Encoding.UTF8))
                 {
-                    w.WriteLine("Id;Produto;Categoria;Quantidade");
+                    w.WriteLine("Id;Produto;Categoria;Min;Saldo");
                     foreach (var c in produtos)
                     {
-                        w.WriteLine($"{c.Id};{c.Produto};{c.Categoria};{c.Quantidade}");
+                        w.WriteLine($"{c.Id};{c.Produto};{c.Categoria};{c.EstoqueMinimo};{c.Saldo}");
                     }
                 }
 

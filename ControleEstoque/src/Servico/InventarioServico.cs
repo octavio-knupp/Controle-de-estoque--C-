@@ -1,6 +1,9 @@
-﻿namespace ControleEstoque.src.Servico
+﻿//Pasta src: Pasta Servico: Inventario.cs
+
+namespace ControleEstoque.src.Servico
 {
-    internal class InventarioServico
+    public class InventarioServico
     {
+
     }
 }

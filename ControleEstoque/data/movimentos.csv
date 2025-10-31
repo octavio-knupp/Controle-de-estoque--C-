@@ -1,2 +1,2 @@
 
-Id;Produto;Categorias;Quantidade
+Id;ProdutoId;Tipo;Quantidade;Data;Observacao

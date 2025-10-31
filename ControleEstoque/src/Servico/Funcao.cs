@@ -1,4 +1,6 @@
-﻿namespace ControleEstoque.src.Servico
+﻿//Pasta src: Pasta Servico: Funcao.cs
+
+namespace ControleEstoque.src.Servico
 {
     public class Funcao
     {
