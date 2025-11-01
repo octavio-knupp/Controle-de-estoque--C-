@@ -10,10 +10,12 @@ var armazenamento = new CsvArmazenamento("data");
 //alterar nome da variavel....
 var estoque = armazenamento.LoadAll();
 
+// Função para gerar o próximo ID
 int NextId() => estoque.Any() ? estoque.Max(c => c.Id) + 1 : 1;
 
 while (true)
 {
+    // Menu principal
     Console.Clear();
     Funcao.txt("");
     Funcao.txt("==== CONTROLE DE ESTOQUE ====");
@@ -41,7 +43,7 @@ while (true)
     {
         switch (op)
         {
-            case "1": //Cadastrar produto
+            case "1": // Listar produtos
                 if (!estoque.Any())
                 {
                     Funcao.txt("Sem produtos cadastrados.");
@@ -55,6 +57,7 @@ while (true)
 
                 foreach (var c in estoque.OrderBy(c => c.Produto))
                 {
+                    // Exibir detalhes do produto
                     Funcao.txt(
                         c.Id.ToString().PadRight(10) +
                         c.Produto.PadRight(15) +
@@ -66,10 +69,7 @@ while (true)
                 Console.ReadKey();
                 break;
 
-            // =====================================
-            // 2. CADASTRAR PRODUTO
-            // =====================================
-            case "2":
+            case "2": // Cadastrar produto
                 Funcao.txt("Produto: ");
                 var prod = Console.ReadLine() ?? "";
 
@@ -110,10 +110,7 @@ while (true)
                 Console.ReadKey();
                 break;
 
-            // =====================================
-            // 3. EDITAR SALDO
-            // =====================================
-            case "3":
+            case "3": // EDITAR PRODUTO (SALDO)
                 Funcao.txt("ID do produto: ");
                 if (!int.TryParse(Console.ReadLine(), out int idUp))
                 {
@@ -149,14 +146,11 @@ while (true)
                 var atualizado = new Produtos(atual.Id, atual.Produto, atual.Categoria, atual.EstoqueMinimo, novoSaldo);
                 estoque[idx] = atualizado;
 
-                Funcao.txt("✅ Saldo atualizado com sucesso!");
+                Funcao.txt("Saldo atualizado com sucesso!");
                 Console.ReadKey();
                 break;
 
-            // =====================================
-            // 4. EXCLUIR PRODUTO
-            // =====================================
-            case "4":
+            case "4": // EXCLUIR PRODUTO
                 Funcao.txt("ID do produto para excluir: ");
                 if (!int.TryParse(Console.ReadLine(), out int idDel))
                 {
@@ -170,10 +164,7 @@ while (true)
                 Console.ReadKey();
                 break;
 
-            // =====================================
-            // 5. ENTRADA DE ESTOQUE
-            // =====================================
-            case "5":
+            case "5": // ENTRADA DE ESTOQUE
                 Funcao.txt("ID do produto: ");
                 if (!int.TryParse(Console.ReadLine(), out int idEnt))
                 {
@@ -205,10 +196,7 @@ while (true)
                 Console.ReadKey();
                 break;
 
-            // =====================================
-            // 6. SAÍDA DE ESTOQUE
-            // =====================================
-            case "6":
+            case "6": // SAÍDA DE ESTOQUE
                 Funcao.txt("ID do produto: ");
                 if (!int.TryParse(Console.ReadLine(), out int idSai))
                 {
@@ -243,14 +231,11 @@ while (true)
                 prodSai = prodSai with { Saldo = prodSai.Saldo - qtdSai };
                 estoque[estoque.FindIndex(c => c.Id == idSai)] = prodSai;
 
-                Funcao.txt($"✅ Saída registrada! Novo saldo: {prodSai.Saldo}");
+                Funcao.txt($"Saída registrada! Novo saldo: {prodSai.Saldo}");
                 Console.ReadKey();
                 break;
 
-            // =====================================
-            // 7. RELATÓRIO: ABAIXO DO MÍNIMO
-            // =====================================
-            case "7":
+            case "7": // RELATÓRIO: ESTOQUE ABAIXO DO MÍNIMO
                 var abaixo = estoque.Where(c => c.Saldo < c.EstoqueMinimo).ToList();
 
                 if (!abaixo.Any())
@@ -266,39 +251,30 @@ while (true)
                 Console.ReadKey();
                 break;
 
-            // =====================================
-            // 8. RELATÓRIO: EXTRATO (FUTURO)
-            // =====================================
-            case "8":
+            case "8": // RELATÓRIO: EXTRATO DE MOVIMENTOS (FUTURO)
                 Funcao.txt("Essa função será implementada com o arquivo movimentos.csv.");
                 Console.ReadKey();
                 break;
 
-            // =====================================
-            // 9. SALVAR CSV
-            // =====================================
-            case "9":
+            case "9": // SALVAR (CSV)
                 armazenamento.SaveAll(estoque);
-                Funcao.txt("✅ Dados salvos em CSV.");
+                Funcao.txt("Dados salvos em CSV.");
                 Console.ReadKey();
                 break;
 
-            // =====================================
-            // 0. SAIR E SALVAR
-            // =====================================
-            case "0":
-               
+            case "0": // Sair
+
                 Funcao.txt("Saindo...");
                 Console.ReadKey();
                 return;
 
-            default:
+            default: // Opção inválida
                 Funcao.txt("Opção inválida.");
                 Console.ReadKey();
                 break;
         }
     }
-    catch (Exception ex)
+    catch (Exception ex) // Tratamento genérico de erros
     {
         Funcao.txt($"Erro: {ex.Message}");
         Console.ReadKey();
