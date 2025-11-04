@@ -159,10 +159,34 @@ while (true)
                     break;
                 }
 
-                var removido = estoque.RemoveAll(c => c.Id == idDel);
-                Funcao.txt(removido > 0 ? "Produto excluído." : "Produto não encontrado.");
+                // Verifica se o produto existe
+                var prodDel = estoque.FirstOrDefault(c => c.Id == idDel);
+                if (prodDel.Id == 0)
+                {
+                    Funcao.txt("Produto não encontrado.");
+                    Console.ReadKey();
+                    break;
+                }
+
+                // Verifica se o saldo é maior que zero
+                if (prodDel.Saldo > 0)
+                {
+                    Funcao.txt($"Não é possível excluir! Produto tem saldo: {prodDel.Saldo}");
+                    Funcao.txt("Dê baixa total no estoque antes de excluir.");
+                    Console.ReadKey();
+                    break;
+                }
+
+                // Remove o produto
+                estoque.RemoveAll(c => c.Id == idDel);
+                Funcao.txt("Produto excluído com sucesso.");
                 Console.ReadKey();
                 break;
+
+            //var removido = estoque.RemoveAll(c => c.Id == idDel);
+            //Funcao.txt(removido > 0 ? "Produto excluído." : "Produto não encontrado.");
+            //Console.ReadKey();
+            //break;
 
             case "5": // ENTRADA DE ESTOQUE
                 Funcao.txt("ID do produto: ");
