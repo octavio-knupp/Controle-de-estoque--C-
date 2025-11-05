@@ -5,7 +5,11 @@ using ControleEstoque.src.Servico;
 
 Console.OutputEncoding = System.Text.Encoding.UTF8;
 
+// Inicializa o armazenamento CSV e o serviço de inventário
 var armazenamento = new CsvArmazenamento("data");
+
+// Inicializa o serviço de inventário (não utilizado no momento)
+var inventario = new InventarioServico("data");
 
 //alterar nome da variavel....
 var estoque = armazenamento.LoadAll();
@@ -82,6 +86,13 @@ while (true)
                 Funcao.txt("Saldo inicial: ");
                 string saldoStr = Console.ReadLine() ?? "";
 
+                if (string.IsNullOrWhiteSpace(prod) || string.IsNullOrWhiteSpace(cat))
+                {
+                    Funcao.txt("Os campos Produto e Categoria são obrigatórios.");
+                    Console.ReadKey();
+                    break;
+                }
+
                 if (string.IsNullOrWhiteSpace(prod))
                 {
                     Funcao.txt("Nome é obrigatório.");
@@ -106,7 +117,7 @@ while (true)
                 var novo = new Produtos(NextId(), prod.Trim(), cat.Trim(), qMin, saldo);
                 estoque.Add(novo);
 
-                Funcao.txt($"✅ Produto '{novo.Produto}' cadastrado com ID {novo.Id}");
+                Funcao.txt($"Produto '{novo.Produto}' cadastrado com ID {novo.Id}");
                 Console.ReadKey();
                 break;
 
@@ -216,7 +227,9 @@ while (true)
                 prodEnt = prodEnt with { Saldo = prodEnt.Saldo + qtdEnt };
                 estoque[estoque.FindIndex(c => c.Id == idEnt)] = prodEnt;
 
-                Funcao.txt($"✅ Entrada registrada! Novo saldo: {prodEnt.Saldo}");
+                inventario.RegistrarMovimento(prodEnt.Id, "ENTRADA", qtdEnt, "Reposição de estoque");
+
+                Funcao.txt($"Entrada registrada! Novo saldo: {prodEnt.Saldo}");
                 Console.ReadKey();
                 break;
 
@@ -247,7 +260,7 @@ while (true)
 
                 if (qtdSai > prodSai.Saldo)
                 {
-                    Funcao.txt("❌ Saldo insuficiente para saída!");
+                    Funcao.txt("Saldo insuficiente para saída!");
                     Console.ReadKey();
                     break;
                 }
@@ -288,7 +301,17 @@ while (true)
 
             case "0": // Sair
 
-                Funcao.txt("Saindo...");
+                // Pergunta para salvar antes de sair
+                Funcao.txt("Deseja salvar antes de sair? (Sim/Não): ");
+                var resposta = Console.ReadLine()?.ToUpper();
+
+                if (resposta == "Sim") // Salva se a resposta for "Sim"
+                {
+                    armazenamento.SaveAll(estoque);
+                    Funcao.txt("Dados salvos em CSV.!");
+                }
+                // Sai do programa
+                Funcao.txt("Saindo do programa...");
                 Console.ReadKey();
                 return;
 
@@ -300,7 +323,8 @@ while (true)
     }
     catch (Exception ex) // Tratamento genérico de erros
     {
-        Funcao.txt($"Erro: {ex.Message}");
+        Funcao.txt($"Ocorreu um erro inesperado: {ex.Message}");
+        Funcao.txt("Verifique se os arquivos CSV estão acessíveis e se os dados são válidos.");
         Console.ReadKey();
     }
 }
