@@ -66,6 +66,7 @@ while (true)
                         c.Id.ToString().PadRight(10) +
                         c.Produto.PadRight(15) +
                         c.Categoria.PadRight(18) +
+
                         c.EstoqueMinimo.ToString().PadRight(15) +
                         c.Saldo.ToString().PadRight(10)
                     );
@@ -288,8 +289,60 @@ while (true)
                 Console.ReadKey();
                 break;
 
-            case "8": // RELATÓRIO: EXTRATO DE MOVIMENTOS (FUTURO)
-                Funcao.txt("Essa função será implementada com o arquivo movimentos.csv.");
+            case "8": // RELATÓRIO: EXTRATO DE MOVIMENTOS
+                var inventari0 = new InventarioServico("data");
+
+                // Lê todas as linhas (sem o cabeçalho)
+                var movimentos = File.ReadAllLines(Path.Combine("data", "movimentos.csv"))
+                                     .Skip(1)
+                                     .Where(l => !string.IsNullOrWhiteSpace(l))
+                                     .Select(l =>
+                                     {
+                                         var p = l.Split(';');
+                                         return new
+                                         {
+                                             Id = p[0],
+                                             ProdutoId = p[1],
+                                             Tipo = p[2],
+                                             Quantidade = p[3],
+                                             Data = p[4],
+                                             Observacao = p.Length > 5 ? p[5] : ""
+                                         };
+                                     })
+                                     .ToList();
+
+                Console.Clear();
+                Funcao.txt("==== EXTRATO DE MOVIMENTOS ====\n");
+
+                if (!movimentos.Any())
+                {
+                    Funcao.txt("Nenhum movimento registrado ainda.");
+                }
+                else
+                {
+                    Funcao.txt("ID".PadRight(5) +
+                               "PRODUTO ID".PadRight(12) +
+                               "TIPO".PadRight(12) +
+                               "QTD".PadRight(8) +
+                               "DATA".PadRight(22) +
+                               "OBSERVAÇÃO");
+
+                    Funcao.txt(new string('-', 70));
+
+                    foreach (var m in movimentos)
+                    {
+                        Funcao.txt(
+                            m.Id.PadRight(5) +
+                            m.ProdutoId.PadRight(12) +
+                            m.Tipo.PadRight(12) +
+                            m.Quantidade.PadRight(8) +
+                            m.Data.PadRight(22) +
+                            m.Observacao
+                        );
+                    }
+                }
+
+                Funcao.txt("\nPressione qualquer tecla para voltar ao menu...");
                 Console.ReadKey();
                 break;
 
