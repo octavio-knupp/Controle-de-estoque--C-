@@ -30,7 +30,7 @@ while (true)
     Funcao.txt("5 - Dar ENTRADA em estoque");
     Funcao.txt("6 - Dar SAÍDA de estoque");
     Funcao.txt("7 - Relatório: Estoque abaixo do mínimo");
-    Funcao.txt("8 - Relatório: Extrato de movimentos (futuro)");
+    Funcao.txt("8 - Relatório: Extrato de movimentos");
     Funcao.txt("9 - Salvar (CSV)");
     Funcao.txt("0 - Sair");
     Funcao.txt("");
@@ -225,14 +225,12 @@ while (true)
                     break;
                 }
 
-                prodEnt = prodEnt with { Saldo = prodEnt.Saldo + qtdEnt };
-                estoque[estoque.FindIndex(c => c.Id == idEnt)] = prodEnt;
+                inventario.Movimentar(estoque, prodEnt.Id, "ENTRADA", qtdEnt, "Reposição de estoque");
 
-                inventario.RegistrarMovimento(prodEnt.Id, "ENTRADA", qtdEnt, "Reposição de estoque");
-
-                Funcao.txt($"Entrada registrada! Novo saldo: {prodEnt.Saldo}");
+                Funcao.txt($"Entrada registrada! Novo saldo: {estoque.First(p => p.Id == prodEnt.Id).Saldo}");
                 Console.ReadKey();
                 break;
+
 
             case "6": // SAÍDA DE ESTOQUE
                 Funcao.txt("ID do produto: ");
@@ -259,19 +257,19 @@ while (true)
                     break;
                 }
 
-                if (qtdSai > prodSai.Saldo)
+                try
                 {
-                    Funcao.txt("Saldo insuficiente para saída!");
-                    Console.ReadKey();
-                    break;
+                    inventario.Movimentar(estoque, prodSai.Id, "SAIDA", qtdSai, "Saída de estoque");
+                    Funcao.txt($"Saída registrada! Novo saldo: {estoque.First(p => p.Id == prodSai.Id).Saldo}");
+                }
+                catch (Exception ex)
+                {
+                    Funcao.txt($"Erro: {ex.Message}");
                 }
 
-                prodSai = prodSai with { Saldo = prodSai.Saldo - qtdSai };
-                estoque[estoque.FindIndex(c => c.Id == idSai)] = prodSai;
-
-                Funcao.txt($"Saída registrada! Novo saldo: {prodSai.Saldo}");
                 Console.ReadKey();
                 break;
+
 
             case "7": // RELATÓRIO: ESTOQUE ABAIXO DO MÍNIMO
                 var abaixo = estoque.Where(c => c.Saldo < c.EstoqueMinimo).ToList();
@@ -289,62 +287,82 @@ while (true)
                 Console.ReadKey();
                 break;
 
-            case "8": // RELATÓRIO: EXTRATO DE MOVIMENTOS
-                var inventari0 = new InventarioServico("data");
-
-                // Lê todas as linhas (sem o cabeçalho)
-                var movimentos = File.ReadAllLines(Path.Combine("data", "movimentos.csv"))
-                                     .Skip(1)
-                                     .Where(l => !string.IsNullOrWhiteSpace(l))
-                                     .Select(l =>
-                                     {
-                                         var p = l.Split(';');
-                                         return new
-                                         {
-                                             Id = p[0],
-                                             ProdutoId = p[1],
-                                             Tipo = p[2],
-                                             Quantidade = p[3],
-                                             Data = p[4],
-                                             Observacao = p.Length > 5 ? p[5] : ""
-                                         };
-                                     })
-                                     .ToList();
-
+            case "8": // RELATÓRIO: EXTRATO DE MOVIMENTOS (TODOS OS PRODUTOS)
                 Console.Clear();
-                Funcao.txt("==== EXTRATO DE MOVIMENTOS ====\n");
+                Funcao.txt("======================================");
+                Funcao.txt("   RELATÓRIO: EXTRATO DE MOVIMENTOS   ");
+                Funcao.txt("======================================\n");
 
+                // Carrega produtos e movimentos
+                var produtosExtrato = armazenamento.LoadAll();
+                var movimentos = new List<Movimentos>();
+
+                foreach (var p in produtosExtrato)
+                {
+                    var extratoProd = inventario.ExtratoPorProduto(p.Id);
+                    if (extratoProd.Any())
+                        movimentos.AddRange(extratoProd);
+                }
+
+                // Verifica se há algum movimento
                 if (!movimentos.Any())
                 {
-                    Funcao.txt("Nenhum movimento registrado ainda.");
+                    Funcao.txt("Nenhum movimento registrado no sistema.");
+                    Console.ReadKey();
+                    break;
                 }
-                else
+
+                // Junta os nomes dos produtos
+                var movimentosComNome = movimentos
+                    .Join(produtosExtrato,
+                          mov => mov.ProdutoId,
+                          prod => prod.Id,
+                          (mov, prod) => new
+                          {
+                              Produto = prod.Produto,
+                              mov.Tipo,
+                              mov.Quantidade,
+                              mov.Data,
+                              mov.Observacao
+                          })
+                    .OrderBy(m => m.Data)
+                    .ToList();
+
+                // Cabeçalho
+                Funcao.txt("PRODUTO".PadRight(18) +
+                           "TIPO".PadRight(12) +
+                           "QTD".PadRight(8) +
+                           "DATA".PadRight(22) +
+                           "OBSERVAÇÃO");
+                Funcao.txt(new string('-', 85));
+
+                // Exibe todos os movimentos formatados
+                foreach (var m in movimentosComNome)
                 {
-                    Funcao.txt("ID".PadRight(5) +
-                               "PRODUTO ID".PadRight(12) +
-                               "TIPO".PadRight(12) +
-                               "QTD".PadRight(8) +
-                               "DATA".PadRight(22) +
-                               "OBSERVAÇÃO");
+                    if (m.Tipo.ToUpper() == "ENTRADA")
+                        Console.ForegroundColor = ConsoleColor.Green;
+                    else if (m.Tipo.ToUpper() == "SAIDA" || m.Tipo.ToUpper() == "SAIDA")
+                        Console.ForegroundColor = ConsoleColor.Red;
+                    else
+                        Console.ResetColor();
 
-                    Funcao.txt(new string('-', 70));
+                    Funcao.txt(
+                        m.Produto.PadRight(18) +
+                        m.Tipo.PadRight(12) +
+                        m.Quantidade.ToString().PadRight(8) +
+                        m.Data.ToString("dd/MM/yyyy HH:mm").PadRight(22) +
+                        m.Observacao
+                    );
 
-                    foreach (var m in movimentos)
-                    {
-                        Funcao.txt(
-                            m.Id.PadRight(5) +
-                            m.ProdutoId.PadRight(12) +
-                            m.Tipo.PadRight(12) +
-                            m.Quantidade.PadRight(8) +
-                            m.Data.PadRight(22) +
-                            m.Observacao
-                        );
-                    }
+                    Console.ResetColor();
                 }
 
+                Funcao.txt("\n" + new string('-', 85));
+                Funcao.txt("Fim do extrato geral de movimentações.");
                 Funcao.txt("\nPressione qualquer tecla para voltar ao menu...");
                 Console.ReadKey();
                 break;
+
 
             case "9": // SALVAR (CSV)
                 armazenamento.SaveAll(estoque);
