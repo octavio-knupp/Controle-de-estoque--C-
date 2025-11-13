@@ -49,6 +49,7 @@ while (true)
         {
             case "1": // Listar produtos
                 Console.Clear();
+                Funcao.txt("");
                 Funcao.txt("======================================");
                 Funcao.txt("           LISTA DE PRODUTOS           ");
                 Funcao.txt("======================================\n");
@@ -80,6 +81,7 @@ while (true)
 
             case "2": // Cadastrar produto
                 Console.Clear();
+                Funcao.txt("");
                 Funcao.txt("======================================");
                 Funcao.txt("         CADASTRO DE PRODUTOS          ");
                 Funcao.txt("======================================\n");
@@ -132,6 +134,7 @@ while (true)
 
             case "3": // EDITAR PRODUTO (SALDO)
                 Console.Clear();
+                Funcao.txt("");
                 Funcao.txt("======================================");
                 Funcao.txt("            EDITAR PRODUTOS            ");
                 Funcao.txt("======================================\n");
@@ -176,6 +179,7 @@ while (true)
 
             case "4": // EXCLUIR PRODUTO
                 Console.Clear();
+                Funcao.txt("");
                 Funcao.txt("======================================");
                 Funcao.txt("           EXCLUIR PRODUTOS           ");
                 Funcao.txt("======================================\n");
@@ -218,6 +222,7 @@ while (true)
 
             case "5": // ENTRADA DE ESTOQUE
                 Console.Clear();
+                Funcao.txt("");
                 Funcao.txt("======================================");
                 Funcao.txt("          ENTRADA DE ESTOQUE          ");
                 Funcao.txt("======================================\n");
@@ -254,6 +259,7 @@ while (true)
 
             case "6": // SAÍDA DE ESTOQUE
                 Console.Clear();
+                Funcao.txt("");
                 Funcao.txt("======================================");
                 Funcao.txt("           SAÍDA DE ESTOQUE           ");
                 Funcao.txt("======================================\n");
@@ -297,6 +303,7 @@ while (true)
 
             case "7": // RELATÓRIO: ESTOQUE ABAIXO DO MÍNIMO
                 Console.Clear();
+                Funcao.txt("");
                 Funcao.txt("======================================");
                 Funcao.txt("  RELATÓRIO: ESTOQUE ABAIXO DO MÍNIMO  ");
                 Funcao.txt("======================================\n");
@@ -322,14 +329,15 @@ while (true)
                         );
                     }
                 }
-
-                Funcao.txt("\n-----------------------------");
+                Funcao.txt("");
+                Funcao.txt("---------------------------------------------------");
                 Funcao.txt("Precisone qualquer tecla para voltar ao menu... ");
                 Console.ReadKey();
                 break;
 
             case "8": // RELATÓRIO: EXTRATO DE MOVIMENTOS (TODOS OS PRODUTOS)
                 Console.Clear();
+                Funcao.txt("");
                 Funcao.txt("======================================");
                 Funcao.txt("   RELATÓRIO: EXTRATO DE MOVIMENTOS   ");
                 Funcao.txt("======================================\n");
@@ -407,6 +415,7 @@ while (true)
 
             case "9": // SALVAR (CSV)
                 Console.Clear();
+                Funcao.txt("");
                 Funcao.txt("======================================");
                 Funcao.txt("            SALVAR EM CSV             ");
                 Funcao.txt("======================================\n");
