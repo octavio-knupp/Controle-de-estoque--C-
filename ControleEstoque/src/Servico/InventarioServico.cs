@@ -38,9 +38,9 @@ namespace ControleEstoque.src.Servico
         }
 
         // REGISTRA movimentação (entrada ou saída) e altera o saldo do produto
-        public void Movimentar(List<Produtos> estoque, int produtoId, string Tipo, int quantidade, string observacao)
+        public void Movimentar(List<Produtos> produtos, int produtoId, string Tipo, int quantidade, string observacao)
         {
-            var produto = estoque.FirstOrDefault(p => p.Id == produtoId);
+            var produto = produtos.FirstOrDefault(p => p.Id == produtoId);
             if (produto.Id == 0)
                 throw new Exception("Produto não encontrado.");
 
@@ -59,8 +59,8 @@ namespace ControleEstoque.src.Servico
                 throw new Exception("Tipo de movimento inválido (use ENTRADA ou SAÍDA).");
 
             // Atualiza na lista de estoque
-            var idx = estoque.FindIndex(p => p.Id == produtoId);
-            estoque[idx] = produto;
+            var idx = produtos.FindIndex(p => p.Id == produtoId);
+            produtos[idx] = produto;
 
             // Registra no CSV de movimentos
             RegistrarMovimento(produtoId, Tipo, quantidade, observacao);
@@ -70,7 +70,7 @@ namespace ControleEstoque.src.Servico
         public void RegistrarMovimento(int produtoId, string Tipo, int quantidade, string observacao)
         {
             var id = NextId();
-            var data = DateTime.Now.ToString("dd/MM/yyyy HH:mm");
+            var data = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
             var linha = $"{id};{produtoId};{Tipo};{quantidade};{data};{observacao}";
             File.AppendAllText(_path, linha + "\n", Encoding.UTF8);
         }

@@ -14,7 +14,8 @@ public class CsvArmazenamento
         _path = Path.Combine(baseDir, "produtos.csv");
         if (!File.Exists(_path))
         {
-            File.WriteAllText(_path, "Id;Produto;Categoria;Min;Saldo\n", Encoding.UTF8);
+            File.WriteAllText(_path, "Id;Produto;Categoria;EstoqueMinimo;Saldo\n", Encoding.UTF8);
+
         }
     }
 
