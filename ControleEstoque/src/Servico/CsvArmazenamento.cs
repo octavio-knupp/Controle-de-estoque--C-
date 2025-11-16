@@ -7,7 +7,7 @@ namespace ControleEstoque.src.Servico
     {
         private readonly string _path;
 
-        public CsvArmazenamento(string baseDir = "data")
+        public CsvArmazenamento(string baseDir = @"C:\Users\cunha\Controle-de-estoque--C-\ControleEstoque\data")
         {
             Directory.CreateDirectory(baseDir);
             _path = Path.Combine(baseDir, "produtos.csv");
@@ -24,7 +24,6 @@ namespace ControleEstoque.src.Servico
         {
             var list = new List<Produtos>();
 
-            // Lê todas as linhas e ignora o cabeçalho
             var linhas = File.ReadAllLines(_path, Encoding.UTF8).Skip(1);
 
             foreach (var line in linhas)
@@ -33,18 +32,15 @@ namespace ControleEstoque.src.Servico
 
                 var p = line.Split(';');
 
-                // Inicializa valores padrão
                 int id = 0, min = 0, saldo = 0;
                 string nome = "Indefinido", categoria = "Indefinida";
 
-                // Recupera os dados, mesmo se alguma coluna estiver inválida
-                if (p.Length > 0 && int.TryParse(p[0], out int tmpId)) id = tmpId;
-                if (p.Length > 1 && !string.IsNullOrWhiteSpace(p[1])) nome = p[1];
-                if (p.Length > 2 && !string.IsNullOrWhiteSpace(p[2])) categoria = p[2];
-                if (p.Length > 3 && int.TryParse(p[3], out int tmpMin)) min = tmpMin;
-                if (p.Length > 4 && int.TryParse(p[4], out int tmpSaldo)) saldo = tmpSaldo;
+                int.TryParse(p[0], out id);
+                if (!string.IsNullOrWhiteSpace(p[1])) nome = p[1];
+                if (!string.IsNullOrWhiteSpace(p[2])) categoria = p[2];
+                int.TryParse(p[3], out min);
+                int.TryParse(p[4], out saldo);
 
-                // Adiciona o produto mesmo que incompleto
                 list.Add(new Produtos(
                     Id: id,
                     Produto: nome,
@@ -57,46 +53,27 @@ namespace ControleEstoque.src.Servico
             return list;
         }
 
-        // Salva todos os produtos em CSV com sistema de tentativas
+        // Salva todos os produtos em CSV
         public void SaveAll(IEnumerable<Produtos> produtos)
         {
             var tmp = _path + ".tmp";
-            var maxTentativas = 3;
 
-            for (int tentativa = 1; tentativa <= maxTentativas; tentativa++)
+            using (var w = new StreamWriter(tmp, false, Encoding.UTF8))
             {
-                try
+                w.WriteLine("Id;Produto;Categoria;Min;Saldo");
+                foreach (var c in produtos)
                 {
-                    using (var w = new StreamWriter(tmp, false, Encoding.UTF8))
-                    {
-                        w.WriteLine("Id;Produto;Categoria;Min;Saldo");
-                        foreach (var c in produtos)
-                        {
-                            w.WriteLine($"{c.Id};{c.Produto};{c.Categoria};{c.EstoqueMinimo};{c.Saldo}");
-                        }
-                    }
-
-                    // Substitui o arquivo original de forma segura
-                    if (File.Exists(_path))
-                        File.Replace(tmp, _path, null);
-                    else
-                        File.Move(tmp, _path);
-
-                    return; // Sucesso
-                }
-                catch (IOException ioEx)
-                {
-                    Console.WriteLine($"⚠️ Tentativa {tentativa} falhou ao salvar: {ioEx.Message}");
-
-                    if (tentativa == maxTentativas)
-                        throw new IOException("❌ Não foi possível salvar após várias tentativas. Feche o arquivo CSV e tente novamente.", ioEx);
-
-                    Thread.Sleep(1000); // Espera antes de tentar novamente
+                    w.WriteLine($"{c.Id};{c.Produto};{c.Categoria};{c.EstoqueMinimo};{c.Saldo}");
                 }
             }
+
+            if (File.Exists(_path))
+                File.Replace(tmp, _path, null);
+            else
+                File.Move(tmp, _path);
         }
 
-        // Cria um backup automático do arquivo CSV
+        // Pro método de backup
         public string Backup()
         {
             var backupDir = Path.Combine(Path.GetDirectoryName(_path)!, "backup");

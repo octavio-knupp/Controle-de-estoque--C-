@@ -6,28 +6,24 @@ namespace ControleEstoque.src.Servico
     public class InventarioServico
     {
         private readonly string _path;
+        private readonly string _baseDir = @"C:\Users\cunha\Controle-de-estoque--C-\ControleEstoque\data";
 
-        public InventarioServico(string baseDir = "../../data")
+        public InventarioServico()
         {
-            // Garante que a pasta 'data' exista na raiz do projeto
-            var fullPath = Path.GetFullPath(baseDir);
-            Directory.CreateDirectory(fullPath);
+            Directory.CreateDirectory(_baseDir);
 
-            // Monta o caminho completo do arquivo CSV
-            _path = Path.Combine(fullPath, "movimentos.csv");
+            _path = Path.Combine(_baseDir, "movimentos.csv");
 
-            // Cria o arquivo com cabeçalho se ainda não existir
             if (!File.Exists(_path))
             {
                 File.WriteAllText(_path, "Id;ProdutoId;Tipo;Quantidade;Data;Observacao\n", Encoding.UTF8);
             }
         }
 
-
         private int NextId()
         {
             var lines = File.ReadAllLines(_path, Encoding.UTF8)
-                .Skip(1) // ignora cabeçalho
+                .Skip(1)
                 .Where(l => !string.IsNullOrWhiteSpace(l))
                 .ToList();
 
@@ -37,7 +33,7 @@ namespace ControleEstoque.src.Servico
             return lastId + 1;
         }
 
-        // REGISTRA movimentação (entrada ou saída) e altera o saldo do produto
+        // REGISTRA movimentação + atualiza o CSV de produtos
         public void Movimentar(List<Produtos> produtos, int produtoId, string Tipo, int quantidade, string observacao)
         {
             var produto = produtos.FirstOrDefault(p => p.Id == produtoId);
@@ -48,41 +44,50 @@ namespace ControleEstoque.src.Servico
                 throw new Exception("Quantidade inválida.");
 
             if (Tipo.ToUpper() == "ENTRADA")
+            {
                 produto = produto with { Saldo = produto.Saldo + quantidade };
+            }
             else if (Tipo.ToUpper() == "SAIDA")
             {
                 if (produto.Saldo < quantidade)
                     throw new Exception("Saldo insuficiente para saída.");
+
                 produto = produto with { Saldo = produto.Saldo - quantidade };
             }
             else
-                throw new Exception("Tipo de movimento inválido (use ENTRADA ou SAÍDA).");
+            {
+                throw new Exception("Tipo inválido (use ENTRADA ou SAÍDA).");
+            }
 
-            // Atualiza na lista de estoque
+            // Atualiza o produto na lista
             var idx = produtos.FindIndex(p => p.Id == produtoId);
             produtos[idx] = produto;
 
-            // Registra no CSV de movimentos
+            // 🔥 SALVA NO CSV DE PRODUTOS
+            var repo = new CsvArmazenamento(_baseDir);
+            repo.SaveAll(produtos);
+
+            // SALVA NO MOVIMENTOS.CSV
             RegistrarMovimento(produtoId, Tipo, quantidade, observacao);
         }
 
-        // Apenas grava a linha no CSV
-        public void RegistrarMovimento(int produtoId, string Tipo, int quantidade, string observacao)
+        // Apenas grava a linha
+        private void RegistrarMovimento(int produtoId, string Tipo, int quantidade, string observacao)
         {
             var id = NextId();
             var data = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+
             var linha = $"{id};{produtoId};{Tipo};{quantidade};{data};{observacao}";
             File.AppendAllText(_path, linha + "\n", Encoding.UTF8);
         }
 
-        // Retorna o extrato de movimentações de um produto específico (ordenado por data)
         public List<Movimentos> ExtratoPorProduto(int produtoId)
         {
             if (!File.Exists(_path))
                 return new List<Movimentos>();
 
-            var linhas = File.ReadAllLines(_path, Encoding.UTF8)
-                .Skip(1) // ignora cabeçalho
+            return File.ReadAllLines(_path, Encoding.UTF8)
+                .Skip(1)
                 .Where(l => !string.IsNullOrWhiteSpace(l))
                 .Select(l =>
                 {
@@ -100,10 +105,6 @@ namespace ControleEstoque.src.Servico
                 .Where(m => m.ProdutoId == produtoId)
                 .OrderBy(m => m.Data)
                 .ToList();
-
-            return linhas;
         }
-
-
     }
 }
