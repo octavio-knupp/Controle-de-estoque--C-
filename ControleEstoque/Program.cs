@@ -335,82 +335,120 @@ while (true)
                 Console.ReadKey();
                 break;
 
-            case "8": // RELATÓRIO: EXTRATO DE MOVIMENTOS (TODOS OS PRODUTOS)
-                Console.Clear();
-                Funcao.txt("");
-                Funcao.txt("======================================");
-                Funcao.txt("   RELATÓRIO: EXTRATO DE MOVIMENTOS   ");
-                Funcao.txt("======================================\n");
-
-                // Carrega produtos e movimentos
-                var produtosExtrato = armazenamento.LoadAll();
-                var movimentos = new List<Movimentos>();
-
-                foreach (var p in produtosExtrato)
+            case "8":
                 {
-                    var extratoProd = inventario.ExtratoPorProduto(p.Id);
-                    if (extratoProd.Any())
-                        movimentos.AddRange(extratoProd);
-                }
+                    Console.Clear();
+                    Funcao.txt("======================================");
+                    Funcao.txt("   RELATÓRIO: EXTRATO DE MOVIMENTOS   ");
+                    Funcao.txt("======================================");
 
-                // Verifica se há algum movimento
-                if (!movimentos.Any())
-                {
-                    Funcao.txt("Nenhum movimento registrado no sistema.");
+                    var produtosExtrato = armazenamento.LoadAll();
+                    var movimentos = new List<Movimentos>();
+
+                    foreach (var p in produtosExtrato)
+                    {
+                        var extratoProd = inventario.ExtratoPorProduto(p.Id);
+                        if (extratoProd.Any())
+                            movimentos.AddRange(extratoProd);
+                    }
+
+                    if (!movimentos.Any())
+                    {
+                        Funcao.txt("Nenhum movimento registrado no sistema.");
+                        Console.ReadKey();
+                        break;
+                    }
+
+                    var movimentosComNome = movimentos
+                        .Join(produtosExtrato,
+                              mov => mov.ProdutoId,
+                              prod => prod.Id,
+                              (mov, prod) => new
+                              {
+                                  Produto = prod.Produto,
+                                  mov.Tipo,
+                                  mov.Quantidade,
+                                  mov.Data,
+                                  mov.Observacao
+                              })
+                        .OrderBy(m => m.Data)
+                        .ToList();
+
+                    int colProduto = 20;
+                    int colTipo = 12;
+                    int colQtd = 8;
+                    int colData = 20;
+
+                    string Trunc(string s, int max)
+                    {
+                        if (string.IsNullOrEmpty(s)) return "".PadRight(max);
+                        if (s.Length <= max) return s.PadRight(max);
+                        return s.Substring(0, max - 1) + "…";
+                    }
+
+                    List<string> linhas = new List<string>();
+
+                    string header =
+                        "PRODUTO".PadRight(colProduto) +
+                        "TIPO".PadRight(colTipo) +
+                        "QTD".PadRight(colQtd) +
+                        "DATA".PadRight(colData) +
+                        "OBSERVAÇÃO";
+
+                    linhas.Add(header);
+                    linhas.Add("{{SEPARADOR}}");
+
+                    foreach (var m in movimentosComNome)
+                    {
+                        string produto = Trunc(m.Produto, colProduto);
+                        string tipo = Trunc(m.Tipo, colTipo);
+                        string qtd = m.Quantidade.ToString().PadRight(colQtd);
+                        string dataStr = m.Data.ToString("dd/MM/yyyy HH:mm").PadRight(colData);
+                        string obs = m.Observacao ?? "";
+
+                        string linha =
+                            produto +
+                            tipo +
+                            qtd +
+                            dataStr +
+                            obs;
+
+                        linhas.Add(linha);
+                    }
+
+                    int tabelaWidth = linhas.Max(l => l.Length);
+
+                    int separadorIndex = linhas.IndexOf("{{SEPARADOR}}");
+                    linhas[separadorIndex] = new string('-', tabelaWidth);
+
+                    linhas.Add(new string('-', tabelaWidth));
+
+                    foreach (var l in linhas)
+                    {
+                        if (l.Contains("ENTRADA"))
+                            Console.ForegroundColor = ConsoleColor.Green;
+                        else if (l.Contains("SAIDA"))
+                            Console.ForegroundColor = ConsoleColor.Red;
+                        else
+                            Console.ResetColor();
+
+                        Funcao.txtLeft(l, tabelaWidth);
+                        Console.ResetColor();
+                    }
+
+                    // 🔥 Correção definitiva: garante centralização
+                    Console.WriteLine();
+                    Console.SetCursorPosition(0, Console.CursorTop);
+
+                    Funcao.txt("Fim do extrato geral de movimentações.");
+                    Funcao.txt("Pressione qualquer tecla para voltar ao menu...");
                     Console.ReadKey();
+
                     break;
                 }
 
-                // Junta os nomes dos produtos
-                var movimentosComNome = movimentos
-                    .Join(produtosExtrato,
-                          mov => mov.ProdutoId,
-                          prod => prod.Id,
-                          (mov, prod) => new
-                          {
-                              Produto = prod.Produto,
-                              mov.Tipo,
-                              mov.Quantidade,
-                              mov.Data,
-                              mov.Observacao
-                          })
-                    .OrderBy(m => m.Data)
-                    .ToList();
 
-                // Cabeçalho
-                Funcao.txt("PRODUTO".PadRight(18) +
-                           "TIPO".PadRight(12) +
-                           "QTD".PadRight(8) +
-                           "DATA".PadRight(22) +
-                           "OBSERVAÇÃO");
-                Funcao.txt(new string('-', 85));
 
-                // Exibe todos os movimentos formatados
-                foreach (var m in movimentosComNome)
-                {
-                    if (m.Tipo.ToUpper() == "ENTRADA")
-                        Console.ForegroundColor = ConsoleColor.Green;
-                    else if (m.Tipo.ToUpper() == "SAIDA" || m.Tipo.ToUpper() == "SAIDA")
-                        Console.ForegroundColor = ConsoleColor.Red;
-                    else
-                        Console.ResetColor();
-
-                    Funcao.txt(
-                        m.Produto.PadRight(18) +
-                        m.Tipo.PadRight(12) +
-                        m.Quantidade.ToString().PadRight(8) +
-                        m.Data.ToString("dd/MM/yyyy HH:mm").PadRight(22) +
-                        m.Observacao
-                    );
-
-                    Console.ResetColor();
-                }
-
-                Funcao.txt("\n" + new string('-', 85));
-                Funcao.txt("Fim do extrato geral de movimentações.");
-                Funcao.txt("\nPressione qualquer tecla para voltar ao menu...");
-                Console.ReadKey();
-                break;
 
 
             case "9": // SALVAR (CSV)
