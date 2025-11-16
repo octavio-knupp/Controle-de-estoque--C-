@@ -436,7 +436,7 @@ while (true)
                         Console.ResetColor();
                     }
 
-                    // Correção definitiva: garante centralização
+                    //Correção definitiva: garante centralização
                     Console.WriteLine();
                     Console.SetCursorPosition(0, Console.CursorTop);
 
