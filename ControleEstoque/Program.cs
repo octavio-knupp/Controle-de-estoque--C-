@@ -9,7 +9,7 @@ Console.OutputEncoding = System.Text.Encoding.UTF8;
 var armazenamento = new CsvArmazenamento("data");
 
 // Inicializa o serviço de inventário (não utilizado no momento)
-var inventario = new InventarioServico("data");
+var inventario = new InventarioServico();
 
 //alterar nome da variavel....
 var produtos = armazenamento.LoadAll();
@@ -436,7 +436,7 @@ while (true)
                         Console.ResetColor();
                     }
 
-                    // 🔥 Correção definitiva: garante centralização
+                    // Correção definitiva: garante centralização
                     Console.WriteLine();
                     Console.SetCursorPosition(0, Console.CursorTop);
 
