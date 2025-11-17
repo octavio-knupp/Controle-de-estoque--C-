@@ -63,7 +63,7 @@ Projeto criado como exercício acadêmico para prática de lógica de programaç
   
 #Autores
 
-Octavio Henrique Knupp Lúcio – Desenvolvedor
+Octavio Henrique Knupp Lucio – Desenvolvedor
 - Github: octavio-knupp
 
 Alexandre Aielo Lima – Desenvolvedor
