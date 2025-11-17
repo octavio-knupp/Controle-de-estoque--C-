@@ -5,12 +5,12 @@ using ControleEstoque.src.Servico;
 
 Console.OutputEncoding = System.Text.Encoding.UTF8;
 
-string baseDir = @"C:\Users\cunha\Controle-de-estoque--C-\ControleEstoque\data";
+string baseDir = @"..\..\..\data";
 
 var armazenamento = new CsvArmazenamento(baseDir);
 var inventario = new InventarioServico(baseDir);
 
-//alterar nome da variavel....
+// Alterar nome da variavel....
 var produtos = armazenamento.LoadAll();
 
 // Função para gerar o próximo ID
@@ -21,7 +21,9 @@ while (true)
     // Menu principal
     Console.Clear();
     Funcao.txt("");
-    Funcao.txt("==== CONTROLE DE ESTOQUE ====");
+    Funcao.txt("=============================");
+    Funcao.txt("    CONTROLE DE ESTOQUE    ");
+    Funcao.txt("=============================\n");
     Funcao.txt("1 - Listar produtos");
     Funcao.txt("2 - Cadastrar produto");
     Funcao.txt("3 - Editar produto (saldo)");

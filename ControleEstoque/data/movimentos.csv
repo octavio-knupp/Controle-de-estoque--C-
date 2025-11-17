@@ -2,3 +2,7 @@ Id;ProdutoId;Tipo;Quantidade;Data;Observacao
 1;1;SAIDA;90;2025-11-16 16:18:56;Saída de estoque
 2;1;ENTRADA;50;2025-11-16 16:19:28;Reposição de estoque
 3;1;SAIDA;110;2025-11-16 16:19:34;Saída de estoque
+4;1;ENTRADA;20;2025-11-17 15:04:27;Reposição de estoque
+5;1;SAIDA;55;2025-11-17 15:04:40;Saída de estoque
+6;1;ENTRADA;15;2025-11-17 15:13:00;Reposição de estoque
+7;1;SAIDA;25;2025-11-17 15:13:08;Saída de estoque
