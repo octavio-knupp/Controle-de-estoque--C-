@@ -6,10 +6,12 @@ namespace ControleEstoque.src.Servico
     public class InventarioServico
     {
         private readonly string _path;
-        private readonly string _baseDir = @"C:\Users\cunha\Controle-de-estoque--C-\ControleEstoque\data";
+        private readonly string _baseDir;
 
-        public InventarioServico()
+        public InventarioServico(string baseDir)
         {
+            _baseDir = baseDir;
+
             Directory.CreateDirectory(_baseDir);
 
             _path = Path.Combine(_baseDir, "movimentos.csv");
@@ -33,11 +35,10 @@ namespace ControleEstoque.src.Servico
             return lastId + 1;
         }
 
-        // REGISTRA movimentação + atualiza o CSV de produtos
         public void Movimentar(List<Produtos> produtos, int produtoId, string Tipo, int quantidade, string observacao)
         {
             var produto = produtos.FirstOrDefault(p => p.Id == produtoId);
-            if (produto.Id == 0)
+            if (produto == null)
                 throw new Exception("Produto não encontrado.");
 
             if (quantidade <= 0)
@@ -56,14 +57,14 @@ namespace ControleEstoque.src.Servico
             }
             else
             {
-                throw new Exception("Tipo inválido (use ENTRADA ou SAÍDA).");
+                throw new Exception("Tipo inválido.");
             }
 
-            // Atualiza o produto na lista
+            // Atualiza na lista
             var idx = produtos.FindIndex(p => p.Id == produtoId);
             produtos[idx] = produto;
 
-            // 🔥 SALVA NO CSV DE PRODUTOS
+            // SALVA NO CSV DE PRODUTOS
             var repo = new CsvArmazenamento(_baseDir);
             repo.SaveAll(produtos);
 
@@ -71,13 +72,12 @@ namespace ControleEstoque.src.Servico
             RegistrarMovimento(produtoId, Tipo, quantidade, observacao);
         }
 
-        // Apenas grava a linha
         private void RegistrarMovimento(int produtoId, string Tipo, int quantidade, string observacao)
         {
             var id = NextId();
             var data = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
-
             var linha = $"{id};{produtoId};{Tipo};{quantidade};{data};{observacao}";
+
             File.AppendAllText(_path, linha + "\n", Encoding.UTF8);
         }
 

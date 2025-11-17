@@ -5,11 +5,10 @@ using ControleEstoque.src.Servico;
 
 Console.OutputEncoding = System.Text.Encoding.UTF8;
 
-// Inicializa o armazenamento CSV e o serviço de inventário
-var armazenamento = new CsvArmazenamento("data");
+string baseDir = @"C:\Users\cunha\Controle-de-estoque--C-\ControleEstoque\data";
 
-// Inicializa o serviço de inventário (não utilizado no momento)
-var inventario = new InventarioServico();
+var armazenamento = new CsvArmazenamento(baseDir);
+var inventario = new InventarioServico(baseDir);
 
 //alterar nome da variavel....
 var produtos = armazenamento.LoadAll();
@@ -186,7 +185,7 @@ while (true)
 
                 // Verifica se o produto existe
                 var prodDel = produtos.FirstOrDefault(c => c.Id == idDel);
-                if (prodDel.Id == 0)
+                if (prodDel == null)
                 {
                     Funcao.txt("Produto não encontrado.");
                     Console.ReadKey();
@@ -328,14 +327,14 @@ while (true)
                 Console.ReadKey();
                 break;
 
-            case "8":
+            case "8": // RELATÓRIO: EXTRATO DE MOVIMENTOS
                 {
                     Console.Clear();
                     Funcao.txt("======================================");
                     Funcao.txt("   RELATÓRIO: EXTRATO DE MOVIMENTOS   ");
                     Funcao.txt("======================================");
 
-                    var produtosExtrato = armazenamento.LoadAll();
+                    var produtosExtrato = produtos;
                     var movimentos = new List<Movimentos>();
 
                     foreach (var p in produtosExtrato)

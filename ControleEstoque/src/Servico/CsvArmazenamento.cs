@@ -7,22 +7,29 @@ namespace ControleEstoque.src.Servico
     {
         private readonly string _path;
 
-        public CsvArmazenamento(string baseDir = @"C:\Users\cunha\Controle-de-estoque--C-\ControleEstoque\data")
+        //SEM caminho fixo — Program.cs escolhe a pasta
+        public CsvArmazenamento(string baseDir)
         {
+            // Garante que a pasta existe
             Directory.CreateDirectory(baseDir);
+
+            // Caminho do arquivo CSV dentro da pasta escolhida
             _path = Path.Combine(baseDir, "produtos.csv");
 
-            // Cria o arquivo com cabeçalho se não existir
+            // Se não existe, cria com cabeçalho
             if (!File.Exists(_path))
             {
                 File.WriteAllText(_path, "Id;Produto;Categoria;Min;Saldo\n", Encoding.UTF8);
             }
         }
 
-        // Carrega todos os produtos do CSV com recuperação de erros
+        // Carrega todos os produtos do CSV
         public List<Produtos> LoadAll()
         {
             var list = new List<Produtos>();
+
+            if (!File.Exists(_path))
+                return list;
 
             var linhas = File.ReadAllLines(_path, Encoding.UTF8).Skip(1);
 
@@ -33,27 +40,21 @@ namespace ControleEstoque.src.Servico
                 var p = line.Split(';');
 
                 int id = 0, min = 0, saldo = 0;
-                string nome = "Indefinido", categoria = "Indefinida";
+                string nome = "", categoria = "";
 
                 int.TryParse(p[0], out id);
-                if (!string.IsNullOrWhiteSpace(p[1])) nome = p[1];
-                if (!string.IsNullOrWhiteSpace(p[2])) categoria = p[2];
+                nome = p[1];
+                categoria = p[2];
                 int.TryParse(p[3], out min);
                 int.TryParse(p[4], out saldo);
 
-                list.Add(new Produtos(
-                    Id: id,
-                    Produto: nome,
-                    Categoria: categoria,
-                    EstoqueMinimo: min,
-                    Saldo: saldo
-                ));
+                list.Add(new Produtos(id, nome, categoria, min, saldo));
             }
 
             return list;
         }
 
-        // Salva todos os produtos em CSV
+        // Salva a lista completa no CSV
         public void SaveAll(IEnumerable<Produtos> produtos)
         {
             var tmp = _path + ".tmp";
@@ -61,19 +62,21 @@ namespace ControleEstoque.src.Servico
             using (var w = new StreamWriter(tmp, false, Encoding.UTF8))
             {
                 w.WriteLine("Id;Produto;Categoria;Min;Saldo");
+
                 foreach (var c in produtos)
                 {
                     w.WriteLine($"{c.Id};{c.Produto};{c.Categoria};{c.EstoqueMinimo};{c.Saldo}");
                 }
             }
 
+            // Troca arquivo antigo pelo novo
             if (File.Exists(_path))
                 File.Replace(tmp, _path, null);
             else
                 File.Move(tmp, _path);
         }
 
-        // Pro método de backup
+        // Backup opcional
         public string Backup()
         {
             var backupDir = Path.Combine(Path.GetDirectoryName(_path)!, "backup");
