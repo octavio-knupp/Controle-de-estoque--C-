@@ -104,13 +104,6 @@ while (true)
                     break;
                 }
 
-                if (string.IsNullOrWhiteSpace(prod))
-                {
-                    Funcao.txt("Nome é obrigatório.");
-                    Console.ReadKey();
-                    break;
-                }
-
                 if (!int.TryParse(qMinStr, out int qMin) || qMin < 0)
                 {
                     Funcao.txt("Quantidade mínima inválida.");
@@ -474,8 +467,13 @@ while (true)
                 if (resposta == "SIM" || resposta == "S") // Salva se a resposta for "Sim"
                 {
                     armazenamento.SaveAll(produtos);
-                    Funcao.txt("Dados salvos em CSV.!");
+                    Funcao.txt("Dados salvos em CSV!\n");
                 }
+                else if (resposta == "NÃO" || resposta == "NAO" || resposta == "N")
+                {
+                    Funcao.txt("Saindo sem salvar em CSV!\n");
+                }
+
                 // Sai do programa
                 Funcao.txt("Saindo do programa...");
                 Console.ReadKey();
