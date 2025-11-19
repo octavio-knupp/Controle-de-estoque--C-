@@ -58,7 +58,7 @@ Projeto criado como exercício acadêmico para prática de lógica de programaç
 - Programação estruturada e modularizada
 - Records (`record struct`)
 - Manipulação de arquivos CSV
-- Console Application
+
   ---
   
 #Autores
